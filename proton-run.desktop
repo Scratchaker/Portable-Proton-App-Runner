@@ -1,0 +1,8 @@
+[Desktop Entry]
+Comment=
+Exec=proton %f
+Icon=applications-games
+MimeType=application/x-ms-dos-executable;
+Name=Proton Runner
+NoDisplay=true
+
