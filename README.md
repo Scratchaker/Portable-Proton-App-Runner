@@ -70,7 +70,7 @@ mkdir -p ~/.local/bin
 ln -s ~/.protonrunner/runWithProton.sh ~/.local/bin/proton
 
 mkdir -p ~/.local/share/applications
-cp portable-proton-app-runner/proton-run.desktop ~/.local/share/applications/
+cp Portable-Proton-App-Runner/proton-run.desktop ~/.local/share/applications/
 ```
 
 After installation:
