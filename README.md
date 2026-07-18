@@ -15,7 +15,7 @@ The launcher automatically creates an isolated Proton prefix for each executable
 - [Usage](#usage)
 - [Flags](#flags)
 - [How it works](#how-it-works)
-- [Debugging](#debugging)
+- [Troubleshooting](#troubleshooting)
   - [~/.local/bin is not in PATH](#localbin-is-not-in-path)
   - [Proton is not being detected](#proton-is-not-being-detected)
   - [Steam Runtime is not being detected](#steam-runtime-is-not-being-detected)
@@ -231,11 +231,13 @@ When an executable is launched:
 
 ---
 
-# Debugging
+# Troubleshooting
 
 ## ~/.local/bin is not in PATH
 
 Some distributions do not automatically include `~/.local/bin` in your PATH.
+
+**Some distributions only include it if the directory exists at login. In this cases a reboot or logout+login should do the trick.*
 
 Check:
 
