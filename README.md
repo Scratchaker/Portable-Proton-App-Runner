@@ -67,7 +67,7 @@ cp Portable-Proton-App-Runner/runWithProton.sh ~/.protonrunner/
 chmod +x ~/.protonrunner/runWithProton.sh
 
 mkdir -p ~/.local/bin
-ln -s ~/.protonrunner/runWithProton.sh ~/.local/bin/proton
+ln -s ~/.protonrunner/runWithProton.sh ~/.local/bin/proton-runner
 
 mkdir -p ~/.local/share/applications
 cp Portable-Proton-App-Runner/proton-run.desktop ~/.local/share/applications/
@@ -84,7 +84,7 @@ After installation:
 - A symlink should exist:
 
 ```
-~/.local/bin/proton
+~/.local/bin/proton-runner
 ```
 
 - The desktop file should be copied to:
@@ -177,31 +177,31 @@ This can also be overridden using command-line flags.
 Basic usage:
 
 ```bash
-proton game.exe
+proton-runner game.exe
 ```
 
 Custom prefix:
 
 ```bash
-proton --prefix ~/.proton/mygame game.exe
+proton-runner --prefix ~/.proton/mygame game.exe
 ```
 
 Enable MangoHud:
 
 ```bash
-proton --mangohud game.exe
+proton-runner --mangohud game.exe
 ```
 
 Disable MangoHud:
 
 ```bash
-proton --nomangohud game.exe
+proton-runner --nomangohud game.exe
 ```
 
 Pass extra arguments:
 
 ```bash
-proton game.exe --windowed --nosound
+proton-runner game.exe --windowed --nosound
 ```
 *Passed arguments must be supported by the game*
 
@@ -304,7 +304,7 @@ To install Proton:
 3. Search for the Proton version (for example, Proton Experimental).
 4. Install it.
 
-For GE-Proton, install it using your preferred Proton-GE installation method.
+For GE-Proton(recommended), install it using your preferred Proton-GE installation method (ProtonPlus, ProtonUp-Qt or manual installation).
 
 ---
 

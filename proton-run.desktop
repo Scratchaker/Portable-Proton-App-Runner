@@ -1,6 +1,6 @@
 [Desktop Entry]
 Comment=
-Exec=proton %f
+Exec=proton-runner %f
 Icon=applications-games
 MimeType=application/x-ms-dos-executable;
 Name=Proton Runner
