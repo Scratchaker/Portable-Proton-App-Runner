@@ -60,7 +60,7 @@ Features:
 Use the One-liner install script:
 
 ```
-curl -fsSL https://raw.githubusercontent.com/user/repo/main/script.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Scratchaker/Portable-Proton-App-Runner/main/install.sh | bash
 ```
 
 Once installed, most desktop environments will allow opening `.exe` files using **Proton Runner**.
