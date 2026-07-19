@@ -88,7 +88,7 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         -*)
-            echo "Error: Invalid option"
+            echo "Error: Invalid option" >&2
             exit 1
             ;;
         *)
@@ -137,7 +137,7 @@ else
             export STEAM_COMPAT_DATA_PATH="$PROTON_ROOT/protonprefix"
             ;;
         *)
-            echo "Unknown config."
+            echo "Unknown config." >&2
             exit 1
             ;;
     esac
@@ -153,7 +153,7 @@ case $USE_MANGOHUD in
         export MANGOHUD=1
         ;;
     *)
-        echo "Unknown config."
+        echo "Unknown config." >&2
         exit 1
         ;;
 esac
