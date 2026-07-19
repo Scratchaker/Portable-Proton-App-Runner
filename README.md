@@ -48,7 +48,7 @@ Features:
 
 # Dependencies
 - Steam
-- A Proton version installed (GE-Proton or official Proton)
+- A Proton version (GE-Proton(recommended) or official Proton)
 - Steam Linux Runtime (Sniper)
 - Mangohud (optional)
 
@@ -57,40 +57,10 @@ Features:
 
 # Installation
 
-Clone the repository and install it:
-
-```bash
-git clone https://github.com/Scratchaker/Portable-Proton-App-Runner.git
-
-mkdir -p ~/.protonrunner
-cp Portable-Proton-App-Runner/runWithProton.sh ~/.protonrunner/
-chmod +x ~/.protonrunner/runWithProton.sh
-
-mkdir -p ~/.local/bin
-ln -s ~/.protonrunner/runWithProton.sh ~/.local/bin/proton-runner
-
-mkdir -p ~/.local/share/applications
-cp Portable-Proton-App-Runner/proton-run.desktop ~/.local/share/applications/
-```
-
-After installation:
-
-- The launcher script should be located at:
+Use the One-liner install script:
 
 ```
-~/.protonrunner/runWithProton.sh
-```
-
-- A symlink should exist:
-
-```
-~/.local/bin/proton-runner
-```
-
-- The desktop file should be copied to:
-
-```
-~/.local/share/applications/
+curl -fsSL https://raw.githubusercontent.com/user/repo/main/script.sh | bash
 ```
 
 Once installed, most desktop environments will allow opening `.exe` files using **Proton Runner**.
@@ -99,18 +69,18 @@ Once installed, most desktop environments will allow opening `.exe` files using 
 
 # Configuration
 
-The first section of the script contains all configurable environment variables.
+Use the config file located in `~/.config/proton-runner/config.sh`.
 
-```bash
+```
 PROTON_ROOT="$HOME/.proton"
 STEAM_ROOT="$(realpath "$HOME/.steam/root")"
 PROTON_VER="Proton - Experimental"
-
+STEAM_RUNTIME="$STEAM_ROOT/steamapps/common/SteamLinuxRuntime_sniper/run"
 USE_UNIFIED_PREFIX=0
 USE_MANGOHUD=0
 ```
 
-## PROTON_ROOT
+### PROTON_ROOT
 
 Location where Proton prefixes are stored.
 
@@ -120,46 +90,40 @@ Default:
 ~/.proton
 ```
 
----
-
-## STEAM_ROOT
+### STEAM_ROOT
 
 Steam installation directory.
 
-Normally this does not need to be changed.
+Ususally this does not need to be changed.
 
----
+### PROTON_VER
 
-## PROTON_VER
-
-Specifies which installed Proton version should be used.
+Specifies which installed Proton version should be used, it will be found automatically if installed in `STEAM_ROOT`
 
 Example:
 
-```bash
+```
 PROTON_VER="GE-Proton10-34"
 ```
 
 or
 
-```bash
-PROTON_VER="Proton Experimental"
+```
+PROTON_VER="Proton - Experimental"
 ```
 
----
 
-## USE_UNIFIED_PREFIX
+### USE_UNIFIED_PREFIX
 
-Controls prefix behavior.
+Controls if each executable must have it own prefix.
 
-Value | Description
------ | -----------
-0 | One prefix per executable
-1 | Shared prefix for all applications
 
----
+```
+0 = One prefix per executable
+1 = Shared prefix for all applications
+```
 
-## USE_MANGOHUD
+### USE_MANGOHUD
 
 Enable MangoHud by default.
 
@@ -168,7 +132,7 @@ Enable MangoHud by default.
 1 = Enabled
 ```
 
-This can also be overridden using command-line flags.
+***Most configurations can be overridden with cli flags***
 
 ---
 
@@ -176,31 +140,36 @@ This can also be overridden using command-line flags.
 
 Basic usage:
 
-```bash
+```
 proton-runner game.exe
 ```
 
 Custom prefix:
 
-```bash
-proton-runner --prefix ~/.proton/mygame game.exe
+```
+proton-runner --prefix="~/.proton/mygame" game.exe
+```
+
+Custom proton version:
+```
+proton-runner --proton="GE-Proton10-34" game.exe
 ```
 
 Enable MangoHud:
 
-```bash
+```
 proton-runner --mangohud game.exe
 ```
 
 Disable MangoHud:
 
-```bash
+```
 proton-runner --nomangohud game.exe
 ```
 
-Pass extra arguments:
+Pass extra arguments to the game:
 
-```bash
+```
 proton-runner game.exe --windowed --nosound
 ```
 *Passed arguments must be supported by the game*
@@ -210,11 +179,12 @@ proton-runner game.exe --windowed --nosound
 
 | Flag | Description |
 |------|-------------|
-| `--prefix PATH` | Use a custom Proton prefix |
-| `--prefix=PATH` | Same as above |
+| `--prefix="~/path/to/prefix"` | Set custom prefix |
+| `--proton="Proton version"` | Use custom proton version |
 | `--mangohud` | Enable MangoHud |
 | `--nomangohud` | Disable MangoHud |
-| `--help` | Show help |
+| `--help` `-h` | Show help |
+| `--version` `-v` | Show script version
 
 ---
 
@@ -226,8 +196,7 @@ When an executable is launched:
 2. A Proton prefix is created (or reused).
 3. Steam Runtime is initialized.
 4. Required Proton environment variables are exported.
-5. Proton launches the executable.
-6. Any extra arguments are forwarded unchanged.
+5. Proton launches the executable passing extra arguments to the game.
 
 ---
 
@@ -235,13 +204,13 @@ When an executable is launched:
 
 ## ~/.local/bin is not in PATH
 
-Some distributions do not automatically include `~/.local/bin` in your PATH.
+Some distributions do not automatically include `~/.local/bin` in your $PATH.
 
 **Some distributions only include it if the directory exists at login. In this cases a reboot or logout+login should do the trick.*
 
 Check:
 
-```bash
+```
 echo $PATH
 ```
 
@@ -255,7 +224,7 @@ or
 
 `~/.bash_profile`
 
-```bash
+```
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
@@ -263,23 +232,11 @@ export PATH="$HOME/.local/bin:$PATH"
 
 `~/.zprofile`
 
-```bash
+```
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-After editing the file:
-
-```bash
-source ~/.profile
-```
-
-or
-
-```bash
-source ~/.zprofile
-```
-
-or simply log out and back in.
+After editing the file(s) log out and back in.
 
 ---
 
@@ -287,7 +244,7 @@ or simply log out and back in.
 
 The script searches for the Proton version specified by:
 
-```bash
+```
 PROTON_VER
 ```
 
@@ -319,16 +276,11 @@ If it is missing:
 - Launch any Proton game from Steam.
 - Steam should automatically download **Steam Linux Runtime - Sniper**.
 
-If it does not:
+Or install it manually:
 
 1. Open Steam.
 2. Enable **Tools** in your library filter.
-3. Search for:
-
-```
-Steam Linux Runtime - Sniper
-```
-
+3. Search for `Steam Linux Runtime - Sniper`
 4. Install it manually.
 
 ---
@@ -337,29 +289,29 @@ Steam Linux Runtime - Sniper
 
 ### Ubuntu / Debian
 
-```bash
+```
 sudo apt install mangohud
 ```
 
 ### Fedora
 
-```bash
+```
 sudo dnf install mangohud
 ```
 
 ### Arch Linux
 
-```bash
+```
 sudo pacman -S mangohud
 ```
 
 ### openSUSE
 
-```bash
+```
 sudo zypper install mangohud
 ```
 
-If your distribution does not package MangoHud, install it from the official GitHub releases.
+If your distribution does not package MangoHud, install it from [the official GitHub releases](https://github.com/flightlessmango/MangoHud).
 
 ---
 
@@ -384,14 +336,6 @@ Check:
 
 ---
 
-### Wrong working directory
-
-Some applications expect to start from their own directory.
-
-The launcher changes into the executable's directory before launching it.
-
----
-
 ### Prefix issues
 
 Delete the application's Proton prefix and let it be recreated.
@@ -404,10 +348,3 @@ By default they are stored in:
 
 ---
 
-### Missing permissions
-
-Ensure the launcher is executable:
-
-```bash
-chmod +x ~/.protonrunner/runWithProton.sh
-```

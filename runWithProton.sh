@@ -9,22 +9,23 @@
 # It sets up a separate Proton prefix for each executable to avoid conflicts.
 # Usage: proton <path-to-executable>
 
-# Config env vars (You may need to change)
+
+# Fallback env vars
 PROTON_ROOT="$HOME/.proton"
 STEAM_ROOT="$(realpath "$HOME/.steam/root")"
 PROTON_VER="Proton - Experimental"
-PROTON_DIR="$(find "$STEAM_ROOT" -wholename '*/proton' | grep --color=never -F "$PROTON_VER" | head -1)"
-#PROTON_DIR="$STEAM_ROOT/steamapps/common/$PROTON_VER/proton"
 STEAM_RUNTIME="$STEAM_ROOT/steamapps/common/SteamLinuxRuntime_sniper/run"
 USE_UNIFIED_PREFIX=0
 USE_MANGOHUD=0
 
-# Notes:
-#   Mangohud installation (for Ubuntu/Debian):
-#   wget https://github.com/flightlessmango/MangoHud/releases/download/v0.8.3/MangoHud-0.8.3.r0.g330c42a.tar.gz
-#   tar -xf MangoHud-0.8.3.r0.g330c42a.tar.gz
-#   cd MangoHud/
-#   ./mangohud-setup.sh install
+# Get config
+CFG_DIR="$HOME/.config/proton-runner/config.sh"
+if [[ -f $CFG_DIR ]]; then
+    source $CFG_DIR
+fi
+
+# Compute full proton directory
+PROTON_DIR="$(find "$STEAM_ROOT" -wholename '*/proton' | grep --color=never -F "$PROTON_VER" | head -1)"
 
 # Parse arguments
 CUSTOM_PREFIX=""
@@ -42,6 +43,16 @@ while [[ $# -gt 0 ]]; do
             CUSTOM_PREFIX="${CUSTOM_PREFIX/#\~/$HOME}"
             shift 2
             ;;
+        --proton=*)
+            PROTON_VER="${1#--proton=}"
+            PROTON_DIR="$(find "$STEAM_ROOT" -wholename '*/proton' | grep --color=never -F "$PROTON_VER" | head -1)"
+            shift
+            ;;
+        --proton)
+            PROTON_VER="$2"
+            PROTON_DIR="$(find "$STEAM_ROOT" -wholename '*/proton' | grep --color=never -F "$PROTON_VER" | head -1)"
+            shift 2
+            ;;
         --mangohud)
             USE_MANGOHUD=1
             shift
@@ -50,8 +61,8 @@ while [[ $# -gt 0 ]]; do
             USE_MANGOHUD=0
             shift
             ;;
-        --help)
-            echo "Usage: $0 [--prefix=PATH] [--mangohud | --nomangohud] <executable> [args...]"
+        --help|-h)
+            echo "Usage: $0 [--prefix=PATH] [--proton=VERSION] [--mangohud | --nomangohud] <executable> [args...]"
             echo ""
             echo "Arguments:"
             echo "  <executable>          Path to the .exe to run (required)"
@@ -60,14 +71,25 @@ while [[ $# -gt 0 ]]; do
             echo "Options:"
             echo "  --prefix=PATH         Override the Wine prefix directory"
             echo "                        Default: ~/.proton/<exe-name>/"
+            echo "  --proton=VERSION      Override the Proton version to use"
+            echo "                        Default: $PROTON_VER"
             echo "  --mangohud            Enable MangoHud overlay"
             echo "  --nomangohud          Disable MangoHud overlay (default)"
             echo ""
             echo "Examples:"
             echo "  proton ~/games/MyGame/game.exe"
             echo "  proton --prefix=~/.proton/mygame --mangohud ~/games/MyGame/game.exe"
+            echo "  proton --proton=GE-Proton9-27 ~/games/MyGame/game.exe"
             echo "  proton ~/games/MyGame/game.exe --windowed --nosound"
             exit 0
+            ;;
+        --version|-v)
+            echo "Portable-Proton-App-Runner version 1.0"
+            exit 0
+            ;;
+        -*)
+            echo "Error: Invalid option"
+            exit 1
             ;;
         *)
             POSITIONAL_ARGS+=("$1")
@@ -83,6 +105,13 @@ fi
 
 # Restore positional args
 set -- "${POSITIONAL_ARGS[@]}"
+
+
+# Check if proton version exists
+if [[ -z "$PROTON_DIR" ]]; then
+    echo "Error: could not find Proton version '$PROTON_VER' under $STEAM_ROOT" >&2
+    exit 1
+fi
 
 # Prefix management
 if [[ -n "$CUSTOM_PREFIX" ]]; then
@@ -131,15 +160,10 @@ esac
 
 # Runtime env vars
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_ROOT"
-export PROTON_ENABLE_MEDIA_FOUNDATION_VIDEO=1
-export WINEDLLOVERRIDES="mfplat=b;mf=b;mfreadwrite=b;mfplay=b;msmpeg2vdec=b;msvproc=b"
 export PROTON_LOG=0
 export SteamAppId=0
 export SteamGameId=0
 export STEAM_COMPAT_APP_ID=0
-export PROTON_USE_WINED3D=0
-export DXVK_ASYNC=1
-export VKD3D_FEATURE_FLAGS=NONE
 
 # Run game
 if [[ -n "$STEAM_RUNTIME" ]]; then
