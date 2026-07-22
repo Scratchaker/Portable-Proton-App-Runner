@@ -24,8 +24,18 @@ if [[ -f $CFG_DIR ]]; then
     source $CFG_DIR
 fi
 
+# Check config
+if [[ ! $USE_UNIFIED_PREFIX =~ ^[01]$ ]] || [[ ! $USE_MANGOHUD =~ ^[01]$ ]]; then
+    echo "Error: Unknown config." >&2
+    exit 1
+fi
+
+
 # Compute full proton directory
 PROTON_DIR="$(find "$STEAM_ROOT" -wholename '*/proton' | grep --color=never -F "$PROTON_VER" | head -1)"
+
+# Define script version
+VER="1.0.1"
 
 # Parse arguments
 CUSTOM_PREFIX=""
@@ -62,6 +72,19 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --help|-h)
+            if [[ $USE_UNIFIED_PREFIX -eq 0 ]]; then
+                DISPLAY_PREFIX_PATH="$PROTON_ROOT/<exe-name>"
+            else
+                DISPLAY_PREFIX_PATH="$PROTON_ROOT/protonprefix"
+            fi
+            if [[ $USE_MANGOHUD -eq 0 ]]; then
+                MH_ENABLED=""
+                MH_DISABLED="(default)"
+            else
+                MH_ENABLED="(default)"
+                MH_DISABLED=""
+            fi
+            echo "Portable Proton App Runner                 Version: $VER"
             echo "Usage: $0 [--prefix=PATH] [--proton=VERSION] [--mangohud | --nomangohud] <executable> [args...]"
             echo ""
             echo "Arguments:"
@@ -70,26 +93,26 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  --prefix=PATH         Override the Wine prefix directory"
-            echo "                        Default: ~/.proton/<exe-name>/"
+            echo "                        Default: $DISPLAY_PREFIX_PATH"
             echo "  --proton=VERSION      Override the Proton version to use"
             echo "                        Default: $PROTON_VER"
-            echo "  --mangohud            Enable MangoHud overlay"
-            echo "  --nomangohud          Disable MangoHud overlay (default)"
+            echo "  --mangohud            Enable MangoHud overlay $MH_ENABLED"
+            echo "  --nomangohud          Disable MangoHud overlay $MH_DISABLED"
             echo ""
             echo "Examples:"
-            echo "  proton ~/games/MyGame/game.exe"
-            echo "  proton --prefix=~/.proton/mygame --mangohud ~/games/MyGame/game.exe"
-            echo "  proton --proton=GE-Proton9-27 ~/games/MyGame/game.exe"
-            echo "  proton ~/games/MyGame/game.exe --windowed --nosound"
+            echo "  proton ~/games/MyGame/mygame.exe"
+            echo "  proton --prefix=\"~/.proton/mygame\" --mangohud ~/games/MyGame/mygame.exe"
+            echo "  proton --proton=\"GE-Proton9-27\" ~/games/MyGame/mygame.exe"
+            echo "  proton ~/games/MyGame/mygame.exe --windowed --nosound"
             exit 0
             ;;
         --version|-v)
-            echo "Portable-Proton-App-Runner version 1.0"
+            echo "Portable Proton App Runner version $VER"
             exit 0
             ;;
         -*)
-            echo "Error: Invalid option" >&2
-            exit 1
+            echo "Error: Invalid option: $1" >&2
+            exit 3
             ;;
         *)
             POSITIONAL_ARGS+=("$1")
@@ -99,8 +122,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ ${#POSITIONAL_ARGS[@]} -lt 1 ]]; then
-    echo "Usage: $0 [--prefix=/path/to/prefix] <executable-path> [args...]"
-    exit 1
+    echo "Error: You must provide at least one argument." >&2
+    exit 2
 fi
 
 # Restore positional args
@@ -110,7 +133,7 @@ set -- "${POSITIONAL_ARGS[@]}"
 # Check if proton version exists
 if [[ -z "$PROTON_DIR" ]]; then
     echo "Error: could not find Proton version '$PROTON_VER' under $STEAM_ROOT" >&2
-    exit 1
+    exit 4
 fi
 
 # Prefix management
@@ -136,25 +159,17 @@ else
             [[ -d  "$PROTON_ROOT/protonprefix" ]] || mkdir -p "$PROTON_ROOT/protonprefix"
             export STEAM_COMPAT_DATA_PATH="$PROTON_ROOT/protonprefix"
             ;;
-        *)
-            echo "Unknown config." >&2
-            exit 1
-            ;;
     esac
 fi
 # Mangohud
 case $USE_MANGOHUD in
     0)
-        # Disabled Mangohud
+        # Disable Mangohud
         export MANGOHUD=0
         ;;
     1)
-        # Enabled Mangohud
+        # Enable Mangohud
         export MANGOHUD=1
-        ;;
-    *)
-        echo "Unknown config." >&2
-        exit 1
         ;;
 esac
 
