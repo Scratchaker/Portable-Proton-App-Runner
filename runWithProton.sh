@@ -26,7 +26,7 @@ fi
 
 # Check config
 if [[ ! $USE_UNIFIED_PREFIX =~ ^[01]$ ]] || [[ ! $USE_MANGOHUD =~ ^[01]$ ]]; then
-    echo "Error: Unknown config." >&2
+    echo -e "\e[31mError: Unknown config.\e[0m" >&2
     exit 1
 fi
 
@@ -35,7 +35,7 @@ fi
 PROTON_DIR="$(find "$STEAM_ROOT" -wholename '*/proton' | grep --color=never -F "$PROTON_VER" | head -1)"
 
 # Define script version
-VER="1.0.1"
+VER="1.0.2"
 
 # Parse arguments
 CUSTOM_PREFIX=""
@@ -111,7 +111,7 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         -*)
-            echo "Error: Invalid option: $1" >&2
+            echo -e "\e[31mError: Invalid option: $1\e[0m" >&2
             exit 3
             ;;
         *)
@@ -122,7 +122,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ ${#POSITIONAL_ARGS[@]} -lt 1 ]]; then
-    echo "Error: You must provide at least one argument." >&2
+    echo -e "\e[31mError: You must provide at least one argument.\e[0m" >&2
     exit 2
 fi
 
@@ -132,7 +132,7 @@ set -- "${POSITIONAL_ARGS[@]}"
 
 # Check if proton version exists
 if [[ -z "$PROTON_DIR" ]]; then
-    echo "Error: could not find Proton version '$PROTON_VER' under $STEAM_ROOT" >&2
+    echo -e "\e[31mError: could not find Proton version '$PROTON_VER' under $STEAM_ROOT\e[0m" >&2
     exit 4
 fi
 
@@ -180,6 +180,11 @@ export SteamAppId=0
 export SteamGameId=0
 export STEAM_COMPAT_APP_ID=0
 
+# Check if steam runtime exists
+if [[ -n "$STEAM_RUNTIME" && ! -x "$STEAM_RUNTIME" ]]; then
+    echo -e "\e[31mError: Steam Runtime not found at $STEAM_RUNTIME\e[0m" >&2
+    exit 5
+fi
 # Run game
 if [[ -n "$STEAM_RUNTIME" ]]; then
     "$STEAM_RUNTIME" -- "$PROTON_DIR" waitforexitandrun "$@"
