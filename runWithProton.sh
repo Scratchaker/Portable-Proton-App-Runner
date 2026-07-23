@@ -20,12 +20,12 @@ USE_MANGOHUD=0
 
 # Get config
 CFG_DIR="$HOME/.config/proton-runner/config.sh"
-if [[ -f $CFG_DIR ]]; then
-    source $CFG_DIR
+if [[ -f "$CFG_DIR" ]]; then
+    source "$CFG_DIR"
 fi
 
 # Check config
-if [[ ! $USE_UNIFIED_PREFIX =~ ^[01]$ ]] || [[ ! $USE_MANGOHUD =~ ^[01]$ ]]; then
+if [[ ! "$USE_UNIFIED_PREFIX" =~ ^[01]$ ]] || [[ ! "$USE_MANGOHUD" =~ ^[01]$ ]]; then
     echo -e "\e[31mError: Unknown config.\e[0m" >&2
     exit 1
 fi
@@ -35,7 +35,7 @@ fi
 PROTON_DIR="$(find "$STEAM_ROOT" -wholename '*/proton' | grep --color=never -F "$PROTON_VER" | head -1)"
 
 # Define script version
-VER="1.0.2"
+VER="1.0.3"
 
 # Parse arguments
 CUSTOM_PREFIX=""
@@ -61,6 +61,22 @@ while [[ $# -gt 0 ]]; do
         --proton)
             PROTON_VER="$2"
             PROTON_DIR="$(find "$STEAM_ROOT" -wholename '*/proton' | grep --color=never -F "$PROTON_VER" | head -1)"
+            shift 2
+            ;;
+        --steamappid=*)
+            APPID="${1#--steamappid=}"
+            if [[ ! "$APPID" =~ ^[1-9][0-9]*$ ]]; then
+                echo -e "\e[31mError: Invalid AppID format: $APPID\e[0m" >&2
+                exit 6
+            fi
+            shift
+            ;;
+        --steamappid)
+            APPID="$2"
+            if [[ ! "$APPID" =~ ^[1-9][0-9]*$ ]]; then
+                echo -e "\e[31mError: Invalid AppID format: $APPID\e[0m" >&2
+                exit 6
+            fi
             shift 2
             ;;
         --mangohud)
@@ -115,8 +131,8 @@ while [[ $# -gt 0 ]]; do
             exit 3
             ;;
         *)
-            POSITIONAL_ARGS+=("$1")
-            shift
+            POSITIONAL_ARGS+=("$@")
+            break
             ;;
     esac
 done
@@ -176,15 +192,21 @@ esac
 # Runtime env vars
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_ROOT"
 export PROTON_LOG=0
-export SteamAppId=0
-export SteamGameId=0
-export STEAM_COMPAT_APP_ID=0
+
+# AppID
+if [[ -z "$APPID" ]]; then
+    APPID=0
+fi
+export SteamAppId="$APPID"
+export SteamGameId="$APPID"
+export STEAM_COMPAT_APP_ID="$APPID"
 
 # Check if steam runtime exists
 if [[ -n "$STEAM_RUNTIME" && ! -x "$STEAM_RUNTIME" ]]; then
     echo -e "\e[31mError: Steam Runtime not found at $STEAM_RUNTIME\e[0m" >&2
     exit 5
 fi
+
 # Run game
 if [[ -n "$STEAM_RUNTIME" ]]; then
     "$STEAM_RUNTIME" -- "$PROTON_DIR" waitforexitandrun "$@"

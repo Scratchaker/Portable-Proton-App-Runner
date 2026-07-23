@@ -139,13 +139,11 @@ Enable MangoHud by default.
 # Usage
 
 Basic usage:
-
 ```
 proton-runner game.exe
 ```
 
 Custom prefix:
-
 ```
 proton-runner --prefix="~/.proton/mygame" game.exe
 ```
@@ -155,20 +153,22 @@ Custom proton version:
 proton-runner --proton="GE-Proton10-34" game.exe
 ```
 
-Enable MangoHud:
+Force a custom Steam AppID (To take advantage of per-game protonfixes):
+```
+proton-runner --steamappid=477160 game.exe
+```
 
+Enable MangoHud:
 ```
 proton-runner --mangohud game.exe
 ```
 
 Disable MangoHud:
-
 ```
 proton-runner --nomangohud game.exe
 ```
 
 Pass extra arguments to the game:
-
 ```
 proton-runner game.exe --windowed --nosound
 ```
@@ -181,6 +181,7 @@ proton-runner game.exe --windowed --nosound
 |------|-------------|
 | `--prefix="~/path/to/prefix"` | Set custom prefix |
 | `--proton="Proton version"` | Use custom proton version |
+| `--steamappid=appid`  | Force the use of a specific per-game protonfix |
 | `--mangohud` | Enable MangoHud |
 | `--nomangohud` | Disable MangoHud |
 | `--help` `-h` | Show help |
