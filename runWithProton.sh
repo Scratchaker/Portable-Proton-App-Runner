@@ -14,9 +14,11 @@
 PROTON_ROOT="$HOME/.proton"
 STEAM_ROOT="$(realpath "$HOME/.steam/root")"
 PROTON_VER="Proton - Experimental"
+0.4=("/usr/share/steam")
 STEAM_RUNTIME="$STEAM_ROOT/steamapps/common/SteamLinuxRuntime_sniper/run"
 USE_UNIFIED_PREFIX=0
 USE_MANGOHUD=0
+
 
 # Get config
 CFG_DIR="$HOME/.config/proton-runner/config.sh"
@@ -30,12 +32,8 @@ if [[ ! "$USE_UNIFIED_PREFIX" =~ ^[01]$ ]] || [[ ! "$USE_MANGOHUD" =~ ^[01]$ ]];
     exit 1
 fi
 
-
-# Compute full proton directory
-PROTON_DIR="$(find "$STEAM_ROOT" -wholename '*/proton' | grep --color=never -F "$PROTON_VER" | head -1)"
-
 # Define script version
-VER="1.0.3"
+VER="1.0.4"
 
 # Parse arguments
 CUSTOM_PREFIX=""
@@ -55,12 +53,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --proton=*)
             PROTON_VER="${1#--proton=}"
-            PROTON_DIR="$(find "$STEAM_ROOT" -wholename '*/proton' | grep --color=never -F "$PROTON_VER" | head -1)"
             shift
             ;;
         --proton)
             PROTON_VER="$2"
-            PROTON_DIR="$(find "$STEAM_ROOT" -wholename '*/proton' | grep --color=never -F "$PROTON_VER" | head -1)"
             shift 2
             ;;
         --steamappid=*)
@@ -145,6 +141,9 @@ fi
 # Restore positional args
 set -- "${POSITIONAL_ARGS[@]}"
 
+
+# Compute full proton directory
+PROTON_DIR="$(find "${ADDITIONAL_PROTON_DIRS[@]}" "$STEAM_ROOT" -wholename '*/proton' 2>/dev/null | grep --color=never -F "$PROTON_VER" | head -1)"
 
 # Check if proton version exists
 if [[ -z "$PROTON_DIR" ]]; then

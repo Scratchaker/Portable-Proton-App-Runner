@@ -75,6 +75,7 @@ Use the config file located in `~/.config/proton-runner/config.sh`.
 PROTON_ROOT="$HOME/.proton"
 STEAM_ROOT="$(realpath "$HOME/.steam/root")"
 PROTON_VER="Proton - Experimental"
+ADDITIONAL_PROTON_DIRS=("/usr/share/steam")
 STEAM_RUNTIME="$STEAM_ROOT/steamapps/common/SteamLinuxRuntime_sniper/run"
 USE_UNIFIED_PREFIX=0
 USE_MANGOHUD=0
@@ -98,7 +99,7 @@ Ususally this does not need to be changed.
 
 ### PROTON_VER
 
-Specifies which installed Proton version should be used, it will be found automatically if installed in `STEAM_ROOT`
+Specifies which installed Proton version should be used, it will be found automatically if installed in `STEAM_ROOT` or other locations configured in `ADDITIONAL_PROTON_DIRS`.
 
 Example:
 
@@ -112,6 +113,15 @@ or
 PROTON_VER="Proton - Experimental"
 ```
 
+### ADDITIONAL_PROTON_DIRS
+
+Used to define other installation directories where proton may be located, use use bash list syntax.
+
+Example:
+
+```
+ADDITIONAL_PROTON_DIRS=("/usr/share/steam" "/other/example/directory")
+```
 
 ### USE_UNIFIED_PREFIX
 
