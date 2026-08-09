@@ -13,7 +13,7 @@ The launcher automatically creates an isolated Proton prefix for each executable
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
-- [Flags](#flags)
+- [Flags and env vars](#flags-and-env-vars)
 - [How it works](#how-it-works)
 - [Troubleshooting](#troubleshooting)
   - [~/.local/bin is not in PATH](#localbin-is-not-in-path)
@@ -78,7 +78,7 @@ PROTON_VER="Proton - Experimental"
 ADDITIONAL_PROTON_DIRS=("/usr/share/steam")
 STEAM_RUNTIME="$STEAM_ROOT/steamapps/common/SteamLinuxRuntime_sniper/run"
 USE_UNIFIED_PREFIX=0
-USE_MANGOHUD=0
+MANGOHUD=0
 ```
 
 ### PROTON_ROOT
@@ -133,7 +133,7 @@ Controls if each executable must have it own prefix.
 1 = Shared prefix for all applications
 ```
 
-### USE_MANGOHUD
+### MANGOHUD
 
 Enable MangoHud by default.
 
@@ -142,60 +142,70 @@ Enable MangoHud by default.
 1 = Enabled
 ```
 
-***Most configurations can be overridden with cli flags***
+***Most configurations can be overridden with cli flags and env vars***
 
 ---
 
 # Usage
 
-Basic usage:
+**Basic usage:**
 ```
 proton-runner game.exe
 ```
 
-Custom prefix:
+**Custom prefix:**
 ```
 proton-runner --prefix="~/.proton/mygame" game.exe
 ```
-
-Custom proton version:
+```
+CUSTOM_PREFIX="~/.proton/mygame" proton-runner game.exe
+```
+**Custom proton version:**
 ```
 proton-runner --proton="GE-Proton10-34" game.exe
 ```
-
-Force a custom Steam AppID (To take advantage of per-game protonfixes):
+```
+PROTON_VER="GE-Proton10-34" proton-runner game.exe
+```
+**Force a custom Steam AppID (To take advantage of per-game protonfixes):**
 ```
 proton-runner --steamappid=477160 game.exe
 ```
-
-Enable MangoHud:
+```
+APPID=477160 proton-runner game.exe
+```
+**Enable MangoHud:**
 ```
 proton-runner --mangohud game.exe
 ```
-
-Disable MangoHud:
+```
+MANGOHUD=1 proton-runner game.exe
+```
+**Disable MangoHud:**
 ```
 proton-runner --nomangohud game.exe
 ```
-
-Pass extra arguments to the game:
+```
+MANGOHUD=0 proton-runner game.exe
+```
+**Pass extra arguments to the game:**
 ```
 proton-runner game.exe --windowed --nosound
 ```
 *Passed arguments must be supported by the game*
 
 ---
-# Flags
+# Flags and env vars
 
-| Flag | Description |
-|------|-------------|
-| `--prefix="~/path/to/prefix"` | Set custom prefix |
-| `--proton="Proton version"` | Use custom proton version |
-| `--steamappid=appid`  | Force the use of a specific per-game protonfix |
-| `--mangohud` | Enable MangoHud |
-| `--nomangohud` | Disable MangoHud |
-| `--help` `-h` | Show help |
-| `--version` `-v` | Show script version
+| Flag                          | ENV var                            | Description                                    |
+|-------------------------------|------------------------------------|------------------------------------------------|
+| `--prefix="~/path/to/prefix"` | `CUSTOM_PREFIX="~/path/to/prefix"` | Set custom prefix                              |
+| `--proton="Proton version"`   | `PROTON_VER="Proton version"`      | Use custom proton version                      |
+| `--steamappid=appid`          | `APPID=appid`                      | Force the use of a specific per-game protonfix |
+| `--mangohud`                  | `MANGOHUD=1`                       | Enable MangoHud                                |
+| `--nomangohud`                | `MANGOHUD=0`                       | Disable MangoHud                               |
+| `--help` `-h`                 | -                                  | Show help                                      |
+| `--version` `-v`              | -                                  | Show script version                            |
 
 ---
 
@@ -341,7 +351,6 @@ If using the Flatpak version, `STEAM_ROOT` will likely need to be changed.
 Check:
 
 - The executable is not corrupted.
-- Proton supports the application.
 - The required Visual C++ runtimes are installed.
 - The application is compatible with your Proton version.
 

@@ -9,7 +9,10 @@
 # It sets up a separate Proton prefix for each executable to avoid conflicts.
 # Usage: proton <path-to-executable>
 
-
+# Save current environment
+curenv=$(declare -p -x)
+# Export all config env vars
+set -o allexport
 # Fallback env vars
 PROTON_ROOT="$HOME/.proton"
 STEAM_ROOT="$(realpath "$HOME/.steam/root")"
@@ -17,14 +20,16 @@ PROTON_VER="Proton - Experimental"
 ADDITIONAL_PROTON_DIRS=("/usr/share/steam")
 STEAM_RUNTIME="$STEAM_ROOT/steamapps/common/SteamLinuxRuntime_sniper/run"
 USE_UNIFIED_PREFIX=0
-USE_MANGOHUD=0
-
-
-# Get config
+MANGOHUD=0
+# Get user config
 CFG_DIR="$HOME/.config/proton-runner/config.sh"
 if [[ -f "$CFG_DIR" ]]; then
     source "$CFG_DIR"
 fi
+# Stop exporting all config env vars
+set +o allexport
+# Reapply saved environment
+eval "$curenv"
 
 # Check config
 if [[ ! "$USE_UNIFIED_PREFIX" =~ ^[01]$ ]] || [[ ! "$USE_MANGOHUD" =~ ^[01]$ ]]; then
@@ -33,22 +38,19 @@ if [[ ! "$USE_UNIFIED_PREFIX" =~ ^[01]$ ]] || [[ ! "$USE_MANGOHUD" =~ ^[01]$ ]];
 fi
 
 # Define script version
-VER="1.0.4"
+VER="1.0.5"
 
 # Parse arguments
-CUSTOM_PREFIX=""
 POSITIONAL_ARGS=()
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --prefix=*)
             CUSTOM_PREFIX="${1#--prefix=}"
-            CUSTOM_PREFIX="${CUSTOM_PREFIX/#\~/$HOME}"
             shift
             ;;
         --prefix)
             CUSTOM_PREFIX="$2"
-            CUSTOM_PREFIX="${CUSTOM_PREFIX/#\~/$HOME}"
             shift 2
             ;;
         --proton=*)
@@ -76,11 +78,11 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         --mangohud)
-            USE_MANGOHUD=1
+            export MANGOHUD=1
             shift
             ;;
         --nomangohud)
-            USE_MANGOHUD=0
+            export MANGOHUD=0
             shift
             ;;
         --help|-h)
@@ -153,9 +155,9 @@ fi
 
 # Prefix management
 if [[ -n "$CUSTOM_PREFIX" ]]; then
+    CUSTOM_PREFIX="${CUSTOM_PREFIX/#\~/$HOME}"
     GAME_ROOT="$(dirname "$1")"
-    GAME="$(basename "$1" ".exe" | tr ' ' '_')"
-    cd "$GAME_ROOT" || true  # non-fatal, not all exes need cwd
+    cd "$GAME_ROOT" || exit 7
     mkdir -p "$CUSTOM_PREFIX"
     export STEAM_COMPAT_DATA_PATH="$CUSTOM_PREFIX"
 else
@@ -164,29 +166,19 @@ else
             # Create game prefix
             GAME_ROOT="$(dirname "$1")"
             GAME="$(basename "$1" ".exe" | tr ' ' '_')"
-            cd "$GAME_ROOT" || exit
+            cd "$GAME_ROOT" || exit 7
             mkdir -p "$PROTON_ROOT/$GAME"
             export STEAM_COMPAT_DATA_PATH="$PROTON_ROOT/$GAME"
             ;;
         1)
             # Use one prefix for everything
             GAME_ROOT="$(dirname "$1")"
+            cd "$GAME_ROOT" || exit 7
             [[ -d  "$PROTON_ROOT/protonprefix" ]] || mkdir -p "$PROTON_ROOT/protonprefix"
             export STEAM_COMPAT_DATA_PATH="$PROTON_ROOT/protonprefix"
             ;;
     esac
 fi
-# Mangohud
-case $USE_MANGOHUD in
-    0)
-        # Disable Mangohud
-        export MANGOHUD=0
-        ;;
-    1)
-        # Enable Mangohud
-        export MANGOHUD=1
-        ;;
-esac
 
 # Runtime env vars
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_ROOT"
