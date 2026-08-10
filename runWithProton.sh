@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
 
-# Adapted from: https://gist.github.com/shmup/4e7050d50e1db2e9fc4071bf31efa934
+# Idea from: https://gist.github.com/shmup/4e7050d50e1db2e9fc4071bf31efa934
 # Original author: Jared Miller (https://gist.github.com/shmup)
 
-# This script launches a Windows executable using Proton within a Linux environment.
-# It requires at least one argument: the path to the executable to run
-# Extra agruments will be passed to the executable.
-# It sets up a separate Proton prefix for each executable to avoid conflicts.
-# Usage: proton <path-to-executable>
-
+# Store the path to the script
+SELF="$(readlink -f "$0")"
 # Save current environment
 curenv=$(declare -p -x)
 # Export all config env vars
@@ -38,7 +34,7 @@ if [[ ! "$USE_UNIFIED_PREFIX" =~ ^[01]$ ]] || [[ ! "$MANGOHUD" =~ ^[01]$ ]]; the
 fi
 
 # Define script version
-VER="1.0.5a"
+VER="1.1.0"
 
 # Parse arguments
 POSITIONAL_ARGS=()
@@ -198,6 +194,59 @@ if [[ -n "$STEAM_RUNTIME" && ! -x "$STEAM_RUNTIME" ]]; then
     exit 5
 fi
 
+# Parse proton created desktop files and add them to the applications directory
+create_shortcuts() {
+    local shortcuts_src="$STEAM_COMPAT_DATA_PATH/pfx/drive_c/proton_shortcuts"
+    local dest_dir="$HOME/.local/share/applications/proton-runner"
+    [[ -d "$shortcuts_src" ]] || return 0
+    mkdir -p "$dest_dir"
+
+    local stub name icon wmclass exec_line slug out
+    local size_dir candidate size_name width best_size icon_path
+    for stub in "$shortcuts_src"/*.desktop; do
+        [[ -e "$stub" ]] || continue
+
+        name=$(grep -m1 '^Name=' "$stub" | cut -d= -f2-)
+        icon=$(grep -m1 '^Icon=' "$stub" | cut -d= -f2-)
+        wmclass=$(grep -m1 '^StartupWMClass=' "$stub" | cut -d= -f2-)
+        exec_line=$(grep -m1 '^Exec=' "$stub" | cut -d= -f2-)
+
+        # find the highest resolution copy of this icon, in place
+        icon_path=""
+        best_size=0
+        for size_dir in "$shortcuts_src"/icons/*/apps; do
+            [[ -d "$size_dir" ]] || continue
+            candidate="$size_dir/$icon.png"
+            [[ -e "$candidate" ]] || continue
+            size_name=$(basename "$(dirname "$size_dir")")
+            width="${size_name%%x*}"
+            [[ "$width" =~ ^[0-9]+$ ]] || continue
+            if (( width > best_size )); then
+                best_size=$width
+                icon_path="$candidate"
+            fi
+        done
+
+        slug=$(echo "$name" | tr -c 'a-zA-Z0-9' '_')
+        out="$dest_dir/${slug}.desktop"
+        echo "Writing: $out"
+        cat > "$out" <<EOF
+[Desktop Entry]
+Type=Application
+Name=$name
+Icon=${icon_path:-$icon}
+Exec=env CUSTOM_PREFIX="$STEAM_COMPAT_DATA_PATH" PROTON_VER="$PROTON_VER" APPID=$APPID $SELF $exec_line
+StartupNotify=true
+StartupWMClass=$wmclass
+Categories=Game;
+EOF
+    done
+
+    update-desktop-database "$dest_dir" 2>/dev/null || true
+    kbuildsycoca6 --noincremental 2>/dev/null || kbuildsycoca5 --noincremental 2>/dev/null || true
+
+}
+
 # Run game
 if [[ -n "$STEAM_RUNTIME" ]]; then
     "$STEAM_RUNTIME" -- "$PROTON_DIR" waitforexitandrun "$@"
@@ -205,3 +254,4 @@ else
     "$PROTON_DIR" waitforexitandrun "$@"
 fi
 
+create_shortcuts
