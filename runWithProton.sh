@@ -32,13 +32,13 @@ set +o allexport
 eval "$curenv"
 
 # Check config
-if [[ ! "$USE_UNIFIED_PREFIX" =~ ^[01]$ ]] || [[ ! "$USE_MANGOHUD" =~ ^[01]$ ]]; then
+if [[ ! "$USE_UNIFIED_PREFIX" =~ ^[01]$ ]] || [[ ! "$MANGOHUD" =~ ^[01]$ ]]; then
     echo -e "\e[31mError: Unknown config.\e[0m" >&2
     exit 1
 fi
 
 # Define script version
-VER="1.0.5"
+VER="1.0.5a"
 
 # Parse arguments
 POSITIONAL_ARGS=()
@@ -91,7 +91,7 @@ while [[ $# -gt 0 ]]; do
             else
                 DISPLAY_PREFIX_PATH="$PROTON_ROOT/protonprefix"
             fi
-            if [[ $USE_MANGOHUD -eq 0 ]]; then
+            if [[ $MANGOHUD -eq 0 ]]; then
                 MH_ENABLED=""
                 MH_DISABLED="(default)"
             else
