@@ -34,7 +34,7 @@ if [[ ! "$USE_UNIFIED_PREFIX" =~ ^[01]$ ]] || [[ ! "$MANGOHUD" =~ ^[01]$ ]]; the
 fi
 
 # Define script version
-VER="1.1.0"
+VER="1.1.1"
 
 # Parse arguments
 POSITIONAL_ARGS=()
@@ -247,11 +247,22 @@ EOF
 
 }
 
+# Mangohud
+LAUNCH_PREFIX=()
+if [[ "$MANGOHUD" -eq 1 ]]; then
+    if command -v mangohud >/dev/null 2>&1; then
+        LAUNCH_PREFIX=(mangohud)
+    else
+        echo -e "\e[31mError: MANGOHUD=1 but 'mangohud' binary not found in PATH.\e[0m" >&2
+        exit 8
+    fi
+fi
+
 # Run game
 if [[ -n "$STEAM_RUNTIME" ]]; then
-    "$STEAM_RUNTIME" -- "$PROTON_DIR" waitforexitandrun "$@"
+    "${LAUNCH_PREFIX[@]}" "$STEAM_RUNTIME" -- "$PROTON_DIR" waitforexitandrun "$@"
 else
-    "$PROTON_DIR" waitforexitandrun "$@"
+    "${LAUNCH_PREFIX[@]}" "$PROTON_DIR" waitforexitandrun "$@"
 fi
 
 create_shortcuts
