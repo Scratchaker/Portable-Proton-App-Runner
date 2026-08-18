@@ -278,8 +278,8 @@ If it cannot be found:
 To install Proton:
 
 1. Open Steam.
-2. Go to **Library**.
-3. Search for the Proton version (for example, Proton Experimental).
+2. Enable **Tools** in your library filter.
+3. Search for the Proton version (for example, `Proton Experimental`).
 4. Install it.
 
 For GE-Proton(recommended), install it using your preferred Proton-GE installation method (ProtonPlus, ProtonUp-Qt or manual installation).
@@ -301,7 +301,7 @@ Or install it manually:
 
 1. Open Steam.
 2. Enable **Tools** in your library filter.
-3. Search for `Steam Linux Runtime - Sniper`
+3. Search for `Steam Linux Runtime 3.0 (sniper)`
 4. Install it manually.
 
 ---
