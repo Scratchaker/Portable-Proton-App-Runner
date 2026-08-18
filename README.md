@@ -201,7 +201,7 @@ proton-runner game.exe --windowed --nosound
 |-------------------------------|------------------------------------|------------------------------------------------|
 | `--prefix="~/path/to/prefix"` | `CUSTOM_PREFIX="~/path/to/prefix"` | Set custom prefix                              |
 | `--proton="Proton version"`   | `PROTON_VER="Proton version"`      | Use custom proton version                      |
-| `--steamappid=appid`          | `APPID=appid`                      | Force the use of a specific per-game protonfix |
+| `--steamappid=appid`          | `APPID=appid`                      | Select a per-game Protonfix                    |
 | `--mangohud`                  | `MANGOHUD=1`                       | Enable MangoHud                                |
 | `--nomangohud`                | `MANGOHUD=0`                       | Disable MangoHud                               |
 | `--help` `-h`                 | -                                  | Show help                                      |
