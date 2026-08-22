@@ -13,16 +13,16 @@ cd Portable-Proton-App-Runner
 # Copy files
 echo -e "\e[34mCopying files...\e[0m"
 # Main script
-mkdir -p $HOME/.local/bin
-cp runWithProton.sh $HOME/.local/bin/proton-runner
-chmod +x $HOME/.local/bin/proton-runner
+mkdir -p "$HOME/.local/bin"
+cp runWithProton.sh "$HOME/.local/bin/proton-runner"
+chmod +x "$HOME/.local/bin/proton-runner"
 # Desktop launcher
-mkdir -p $HOME/.local/share/applications
-cp proton-run.desktop $HOME/.local/share/applications/proton-run.desktop
+mkdir -p "$HOME/.local/share/applications"
+cp proton-run.desktop "$HOME/.local/share/applications/proton-run.desktop"
 # Config file
-if [[ ! -f $HOME/.config/proton-runner/config.sh ]]; then
-    mkdir -p $HOME/.config/proton-runner/
-    cp config.sh $HOME
+if [[ ! -f "$HOME/.config/proton-runner/config.sh" ]]; then
+    mkdir -p "$HOME/.config/proton-runner"
+    cp config.sh "$HOME/.config/proton-runner/config.sh"
 fi
 
 # Clean up
