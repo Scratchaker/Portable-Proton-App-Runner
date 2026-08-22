@@ -1,31 +1,40 @@
 #!/usr/bin/env bash
 
-# Exit if something fails
-set -e
+set -euo pipefail
 
-# Set up installer working directory
-echo -e "\e[34mDownloading content...\e[0m"
-mkdir -p /tmp/portable-proton-app-runner
-cd /tmp/portable-proton-app-runner
-git clone https://github.com/Scratchaker/Portable-Proton-App-Runner.git
-cd Portable-Proton-App-Runner
+installerDir="/tmp/portable-proton-app-runner"
+installDir="$HOME/.local/bin"
+applicationDir="$HOME/.local/share/applications"
+configDir="$HOME/.config/proton-runner"
 
-# Copy files
-echo -e "\e[34mCopying files...\e[0m"
-# Main script
-mkdir -p "$HOME/.local/bin"
-cp runWithProton.sh "$HOME/.local/bin/proton-runner"
-chmod +x "$HOME/.local/bin/proton-runner"
-# Desktop launcher
-mkdir -p "$HOME/.local/share/applications"
-cp proton-run.desktop "$HOME/.local/share/applications/proton-run.desktop"
-# Config file
-if [[ ! -f "$HOME/.config/proton-runner/config.sh" ]]; then
-    mkdir -p "$HOME/.config/proton-runner"
-    cp config.sh "$HOME/.config/proton-runner/config.sh"
+cleanup() {
+    rm -rf "$installerDir"
+}
+
+trap cleanup EXIT
+
+printf '\e[34mDownloading content...\e[0m\n'
+
+rm -rf "$installerDir"
+mkdir -p "$installerDir"
+
+git clone https://github.com/Scratchaker/Portable-Proton-App-Runner.git \
+    "$installerDir/Portable-Proton-App-Runner"
+
+cd "$installerDir/Portable-Proton-App-Runner"
+
+printf '\e[34mCopying files...\e[0m\n'
+
+mkdir -p "$installDir"
+cp runWithProton.sh "$installDir/proton-runner"
+chmod +x "$installDir/proton-runner"
+
+mkdir -p "$applicationDir"
+cp proton-run.desktop "$applicationDir/proton-run.desktop"
+
+if [[ ! -f "$configDir/config.sh" ]]; then
+    mkdir -p "$configDir"
+    cp config.sh "$configDir/config.sh"
 fi
 
-# Clean up
-echo -e "\e[34mCleaning up..\e[0m"
-cd /tmp
-rm -rf /tmp/portable-proton-app-runner
+printf '\e[34mCleaning up...\e[0m\n'
