@@ -11,6 +11,7 @@ The launcher automatically creates an isolated Proton prefix for each executable
 - [Introduction](#introduction)
 - [Dependencies](#dependencies)
 - [Installation](#installation)
+- [Uninstallation](#uninstallation)
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [Flags and env vars](#flags-and-env-vars)
@@ -64,6 +65,16 @@ curl -fsSL https://raw.githubusercontent.com/Scratchaker/Portable-Proton-App-Run
 ```
 
 Once installed, most desktop environments will allow opening `.exe` files using **Proton Runner**.
+
+---
+
+# Uninstallation
+
+Use the One-liner uninstall script:
+
+```
+curl -fsSL https://raw.githubusercontent.com/Scratchaker/Portable-Proton-App-Runner/main/uninstall.sh | bash
+```
 
 ---
 
