@@ -204,7 +204,8 @@ proton-runner game.exe --windowed --nosound
 | `--steamappid=appid`          | `APPID=appid`                      | Select a per-game Protonfix                    |
 | `--mangohud`                  | `MANGOHUD=1`                       | Enable MangoHud                                |
 | `--nomangohud`                | `MANGOHUD=0`                       | Disable MangoHud                               |
-| `--help` `-h`                 | -                                  | Show help                                      |
+| `--help` `-h`                 | -                                  | Print help message                             |
+| `--man`                       | -                                  | Show manual page                               |
 | `--version` `-v`              | -                                  | Show script version                            |
 
 ---
