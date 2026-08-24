@@ -24,7 +24,7 @@ echo -e "\e[34mDeleting applications launcher...\e[0m"
 rm -f "$applicationFile"
 
 # Installed game launchers
-read -r -p "Remove game launchers [Y/n]: " ans
+read -r -p "Remove game launchers [Y/n]: " ans </dev/tty
 case "$ans" in
     n|no)
         echo -e "\e[34mKeeping installed game launchers (They will not work until you install me back!)...\e[0m"
@@ -36,7 +36,7 @@ case "$ans" in
 esac
 
 # Configuration file
-read -r -p "Remove configuration file [y/N]: " ans
+read -r -p "Remove configuration file [y/N]: " ans </dev/tty
 case "$ans" in
     y|yes)
         echo -e "\e[34mDeleting configuration file...\e[0m"
