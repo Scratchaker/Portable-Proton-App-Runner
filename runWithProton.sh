@@ -34,7 +34,7 @@ if [[ ! "$USE_UNIFIED_PREFIX" =~ ^[01]$ ]] || [[ ! "$MANGOHUD" =~ ^[01]$ ]]; the
 fi
 
 # Define script version
-VER="1.1.1"
+VER="1.1.2"
 
 # Parse arguments
 POSITIONAL_ARGS=()
@@ -84,9 +84,14 @@ while [[ $# -gt 0 ]]; do
         --help|-h)
             if [[ $USE_UNIFIED_PREFIX -eq 0 ]]; then
                 DISPLAY_PREFIX_PATH="$PROTON_ROOT/<exe-name>"
+                UP_ENABLED=""
+                UP_DISABLED=" (default)"
             else
                 DISPLAY_PREFIX_PATH="$PROTON_ROOT/protonprefix"
+                UP_DISABLED=""
+                UP_ENABLED=" (default)"
             fi
+
             if [[ $MANGOHUD -eq 0 ]]; then
                 MH_ENABLED=""
                 MH_DISABLED="(default)"
@@ -95,7 +100,7 @@ while [[ $# -gt 0 ]]; do
                 MH_DISABLED=""
             fi
             echo "Portable Proton App Runner                 Version: $VER"
-            echo "Usage: $0 [--prefix=PATH] [--proton=VERSION] [--mangohud | --nomangohud] <executable> [args...]"
+            echo "Usage: proton-runner [--prefix=PATH] [--proton=VERSION] [--steamappid=APPID] [--mangohud | --nomangohud] <executable> [args...]"
             echo ""
             echo "Arguments:"
             echo "  <executable>          Path to the .exe to run (required)"
@@ -106,14 +111,187 @@ while [[ $# -gt 0 ]]; do
             echo "                        Default: $DISPLAY_PREFIX_PATH"
             echo "  --proton=VERSION      Override the Proton version to use"
             echo "                        Default: $PROTON_VER"
+            echo "  --steamappid=APPID    Set a custom steam appid to take advantage from per-game protonfixes"
+            echo "                        Default: 0"
             echo "  --mangohud            Enable MangoHud overlay $MH_ENABLED"
             echo "  --nomangohud          Disable MangoHud overlay $MH_DISABLED"
             echo ""
             echo "Examples:"
-            echo "  proton ~/games/MyGame/mygame.exe"
-            echo "  proton --prefix=\"~/.proton/mygame\" --mangohud ~/games/MyGame/mygame.exe"
-            echo "  proton --proton=\"GE-Proton9-27\" ~/games/MyGame/mygame.exe"
-            echo "  proton ~/games/MyGame/mygame.exe --windowed --nosound"
+            echo "  proton-runner ~/games/MyGame/mygame.exe"
+            echo "  proton-runner --prefix=\"~/.proton/mygame\" --mangohud ~/games/MyGame/mygame.exe"
+            echo "  proton-runner --proton=\"GE-Proton9-27\" ~/games/MyGame/mygame.exe"
+            echo "  proton-runner --steamappid=620 ~/games/MyGame/mygame.exe"
+            echo "  proton-runner ~/games/MyGame/mygame.exe --windowed --nosound"
+            exit 0
+            ;;
+        --man)
+            if [[ $USE_UNIFIED_PREFIX -eq 0 ]]; then
+                DISPLAY_PREFIX_PATH="$PROTON_ROOT/<exe-name>"
+                UP_ENABLED=""
+                UP_DISABLED=" (default)"
+            else
+                DISPLAY_PREFIX_PATH="$PROTON_ROOT/protonprefix"
+                UP_DISABLED=""
+                UP_ENABLED=" (default)"
+            fi
+
+            if [[ $MANGOHUD -eq 0 ]]; then
+                MH_ENABLED=""
+                MH_DISABLED="(default)"
+            else
+                MH_ENABLED="(default)"
+                MH_DISABLED=""
+            fi
+
+            eval "${PAGER:-less}" <<EOF
+Portable Proton App Runner
+Version: $VER
+
+Run Windows executables using a locally installed Steam Proton version
+without requiring the game to be installed through Steam.
+
+Usage:
+  proton-runner [OPTIONS] <executable> [arguments...]
+
+Required arguments:
+
+  <executable>
+      Path to the Windows executable (.exe) to run.
+
+  [arguments...]
+      Additional arguments passed directly to the executable.
+
+Options:
+
+  --prefix=PATH
+      Use PATH as the Proton/Wine prefix instead of the default prefix.
+
+      Default:
+        $DISPLAY_PREFIX_PATH
+
+      The prefix contains the Wine environment, including the
+      virtual C: drive and Proton configuration.
+
+  --proton=VERSION
+      Select the Proton version used to run the executable.
+
+      Default:
+        $PROTON_VER
+
+      The specified version must be installed in one of the
+      configured Steam Proton directories.
+
+  --steamappid=ID
+      Set the Steam AppID used by Proton.
+      Useful for taking advantage of Steam's per-game protonfixes.
+
+      If omitted, AppID 0 is used.
+
+  --mangohud
+      Enable the MangoHud performance overlay. $MH_ENABLED
+
+  --nomangohud
+      Disable the MangoHud performance overlay. $MH_DISABLED
+
+  --help, -h
+      Display this help message and exit.
+
+  --version, -v
+      Display the script version and exit.
+
+Configuration:
+
+  User configuration:
+    $CFG_DIR
+
+  Default Proton root:
+    $PROTON_ROOT
+
+  Steam installation:
+    $STEAM_ROOT
+
+Prefix modes:
+
+  Separate prefix$UP_DISABLED:
+      A separate prefix is created for each executable.
+
+  Unified prefix$UP_ENABLED:
+      All executables share:
+        $PROTON_ROOT/protonprefix
+
+Examples:
+
+  Run an executable:
+    proton-runner ~/games/MyGame/mygame.exe
+
+  Pass arguments to the executable:
+    proton-runner ~/games/MyGame/mygame.exe --windowed --nosound
+
+  Use a custom prefix:
+    proton-runner --prefix=~/.proton/mygame ~/games/MyGame/mygame.exe
+
+  Use a specific Proton version:
+    proton-runner --proton=GE-Proton9-27 ~/games/MyGame/mygame.exe
+
+  Enable MangoHud:
+    proton-runner --mangohud ~/games/MyGame/mygame.exe
+
+  Set a Steam AppID:
+    proton-runner --steamappid=400 ~/games/MyGame/mygame.exe
+
+  Combine options:
+    proton-runner --proton=GE-Proton9-27 --mangohud --prefix=~/.proton/mygame ~/games/MyGame/mygame.exe
+
+Environment variables:
+
+  Portable Proton App Runner also supports configuration via the
+  following environment variables.
+
+  They can be set before launching the runner or defined in:
+    $CFG_DIR
+
+  PROTON_ROOT
+      Directory where Proton prefixes will be created.
+
+  PROTON_VER
+      Proton version to use.
+
+  ADDITIONAL_PROTON_DIRS
+      List of additional directories searched for installed Proton versions.
+
+  STEAM_RUNTIME
+      Path to the Steam Linux Runtime used to launch Proton.
+
+  USE_UNIFIED_PREFIX
+      Controls whether all executables share a single Proton prefix.
+
+      0 = separate prefix per executable
+      1 = use \$PROTON_ROOT/protonprefix
+
+  MANGOHUD
+      Controls whether MangoHud is enabled.
+
+      0 = disabled
+      1 = enabled
+
+  APPID
+      Steam AppID passed to Proton.
+      0 if unset.
+
+  CUSTOM_PREFIX
+      Proton prefix directory.
+
+Exit codes:
+
+  1   Invalid configuration
+  2   Missing executable
+  3   Invalid option
+  4   Proton version not found
+  5   Steam Runtime not found
+  6   Invalid Steam AppID
+  7   Unable to access executable directory
+  8   MangoHud is enabled but was not found
+EOF
             exit 0
             ;;
         --version|-v)
