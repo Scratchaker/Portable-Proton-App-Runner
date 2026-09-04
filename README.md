@@ -6,7 +6,7 @@ The launcher automatically creates an isolated Proton prefix for each executable
 
 ---
 
-# Index
+# Table of Contents
 
 - [Introduction](#introduction)
 - [Dependencies](#dependencies)
@@ -249,16 +249,12 @@ echo $PATH
 
 If the directory is missing, add the following line to your shell configuration.
 
-### Bash
+### Bash and other shells
 
 `~/.profile`
 
-or
-
-`~/.bash_profile`
-
 ```
-export PATH="$HOME/.local/bin:$PATH"
+[ -d $HOME/.local/bin ] && export PATH="$HOME/.local/bin:$PATH"
 ```
 
 ### Zsh
@@ -266,7 +262,7 @@ export PATH="$HOME/.local/bin:$PATH"
 `~/.zprofile`
 
 ```
-export PATH="$HOME/.local/bin:$PATH"
+[ -d $HOME/.local/bin ] && export PATH="$HOME/.local/bin:$PATH"
 ```
 
 After editing the file(s) log out and back in.
@@ -377,6 +373,3 @@ By default they are stored in:
 ```
 ~/.proton/
 ```
-
----
-
