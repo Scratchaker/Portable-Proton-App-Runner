@@ -2,35 +2,6 @@
 
 Run Windows applications and games directly from your Linux file manager using **Steam's Proton** and **Steam Runtime**, without adding them to your Steam library.
 
-The launcher automatically creates an isolated Proton prefix for each executable (or optionally uses a custom/shared prefix), making it easy to keep applications separated and portable.
-
----
-
-# Table of Contents
-
-- [Introduction](#introduction)
-- [Dependencies](#dependencies)
-- [Installation](#installation)
-- [Uninstallation](#uninstallation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Flags and env vars](#flags-and-env-vars)
-- [How it works](#how-it-works)
-- [Troubleshooting](#troubleshooting)
-
----
-
-# Introduction
-
-Portable Proton App Runner allows you to launch any Windows executable (`.exe`) directly from your desktop environment using Steam's Proton.
-
-Instead of invoking Proton directly, the script uses:
-
-- Steam's **Proton**
-- Steam's **Linux Runtime (Sniper)**
-
-Using the Steam Runtime helps provide a consistent execution environment across Linux distributions and improves compatibility with many Windows applications.
-
 Features:
 
 - Automatic per-application Proton prefixes
@@ -42,12 +13,24 @@ Features:
 
 ---
 
+# Table of Contents
+
+- [Dependencies](#dependencies)
+- [Installation](#installation)
+- [Uninstallation](#uninstallation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Flags and env vars](#flags-and-env-vars)
+- [How it works](#how-it-works)
+- [Troubleshooting](#troubleshooting)
+
+---
+
 # Dependencies
 - Steam
 - A Proton version (GE-Proton(recommended) or official Proton)
 - Steam Linux Runtime (Sniper)
 - Mangohud (optional)
-
 
 ---
 
