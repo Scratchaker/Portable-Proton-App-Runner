@@ -92,68 +92,16 @@ USE_UNIFIED_PREFIX=0
 MANGOHUD=0
 ```
 
-### PROTON_ROOT
+| Config | Description | Default |
+|---|---|---|
+| `PROTON_ROOT` | Location where Proton prefixes are stored. | `"$HOME/.proton"` |
+| `STEAM_ROOT` | Steam installation directory. | `"$HOME/.steam/root"` Usually a symlink(resolved with `realpath`) |
+| `PROTON_VER` | Proton version to use, must be in `STEAM_ROOT` or `ADDITIONAL_PROTON_DIRS`. | `"Proton - Experimental"` |
+| `ADDITIONAL_PROTON_DIRS` | Alternative directories where proton may be installed, use bash list syntax (`("/usr/share/steam" "/example/dir")`). | `("/usr/share/steam")` |
+| `USE_UNIFIED_PREFIX` | Use a single prefix for all games. (`0` or `1`) | `0` |
+| `MANGOHUD` | Use the MangoHud performance overlay. (`0` or `1`) | `0` |
 
-Location where Proton prefixes are stored.
-
-Default:
-
-```
-~/.proton
-```
-
-### STEAM_ROOT
-
-Steam installation directory.
-
-Ususally this does not need to be changed.
-
-### PROTON_VER
-
-Specifies which installed Proton version should be used, it will be found automatically if installed in `STEAM_ROOT` or other locations configured in `ADDITIONAL_PROTON_DIRS`.
-
-Example:
-
-```
-PROTON_VER="GE-Proton10-34"
-```
-
-or
-
-```
-PROTON_VER="Proton - Experimental"
-```
-
-### ADDITIONAL_PROTON_DIRS
-
-Used to define other installation directories where proton may be located, use use bash list syntax.
-
-Example:
-
-```
-ADDITIONAL_PROTON_DIRS=("/usr/share/steam" "/other/example/directory")
-```
-
-### USE_UNIFIED_PREFIX
-
-Controls if each executable must have it own prefix.
-
-
-```
-0 = One prefix per executable
-1 = Shared prefix for all applications
-```
-
-### MANGOHUD
-
-Enable MangoHud by default.
-
-```
-0 = Disabled
-1 = Enabled
-```
-
-***Most configurations can be overridden with cli flags and env vars***
+**Most configurations can be overridden with cli flags and env vars*
 
 ---
 
@@ -239,31 +187,23 @@ When an executable is launched:
 
 Some distributions do not automatically include `~/.local/bin` in your $PATH.
 
-**Some distributions only include it if the directory exists at login. In this cases a reboot or logout+login should do the trick.*
+**Some distributions only include it if the directory exists at login. In these cases a reboot or logout+login should do the trick.*
 
-Check:
+Check with:
 
 ```
 echo $PATH
 ```
 
-If the directory is missing, add the following line to your shell configuration.
-
-### Bash and other shells
-
-`~/.profile`
+If the directory is missing, append the following line to your shell configuration.
 
 ```
 [ -d $HOME/.local/bin ] && export PATH="$HOME/.local/bin:$PATH"
 ```
 
-### Zsh
+Bash: `~/.profile`
 
-`~/.zprofile`
-
-```
-[ -d $HOME/.local/bin ] && export PATH="$HOME/.local/bin:$PATH"
-```
+Zsh: `~/.zprofile`
 
 After editing the file(s) log out and back in.
 
@@ -271,11 +211,7 @@ After editing the file(s) log out and back in.
 
 ## Proton is not being detected
 
-The script searches for the Proton version specified by:
-
-```
-PROTON_VER
-```
+The script searches for the Proton version specified by `PROTON_VER`.
 
 If it cannot be found:
 
@@ -316,29 +252,41 @@ Or install it manually:
 
 ## Installing MangoHud
 
-### Ubuntu / Debian
-
+<details>
+<summary>Ubuntu / Debian</summary>
+  
 ```
 sudo apt install mangohud
 ```
 
-### Fedora
+</details>
+
+<details>
+<summary>Fedora</summary>
 
 ```
 sudo dnf install mangohud
 ```
 
-### Arch Linux
+</details>
+
+<details>
+<summary>Arch Linux</summary>
 
 ```
 sudo pacman -S mangohud
 ```
 
-### openSUSE
+</details>
+
+<details>
+<summary>openSUSE</summary>
 
 ```
 sudo zypper install mangohud
 ```
+
+</details>
 
 If your distribution does not package MangoHud, install it from [the official GitHub releases](https://github.com/flightlessmango/MangoHud).
 
@@ -368,8 +316,4 @@ Check:
 
 Delete the application's Proton prefix and let it be recreated.
 
-By default they are stored in:
-
-```
-~/.proton/
-```
+By default they are stored in `~/.proton/`.
