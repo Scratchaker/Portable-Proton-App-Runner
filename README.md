@@ -17,11 +17,6 @@ The launcher automatically creates an isolated Proton prefix for each executable
 - [Flags and env vars](#flags-and-env-vars)
 - [How it works](#how-it-works)
 - [Troubleshooting](#troubleshooting)
-  - [~/.local/bin is not in PATH](#localbin-is-not-in-path)
-  - [Proton is not being detected](#proton-is-not-being-detected)
-  - [Steam Runtime is not being detected](#steam-runtime-is-not-being-detected)
-  - [Installing MangoHud](#installing-mangohud)
-  - [Other common problems](#other-common-problems)
 
 ---
 
@@ -183,33 +178,34 @@ When an executable is launched:
 
 # Troubleshooting
 
-## ~/.local/bin is not in PATH
+<details>
+<summary><code>~/.local/bin</code> is not in PATH</summary>
 
-Some distributions do not automatically include `~/.local/bin` in your $PATH.
+Some distributions do not automatically include `~/.local/bin` in your `$PATH`.
 
-**Some distributions only include it if the directory exists at login. In these cases a reboot or logout+login should do the trick.*
+**Some distributions only include it if the directory exists at login. In these cases, a reboot or logout+login should fix it.*
 
 Check with:
 
 ```
-echo $PATH
+echo $PATH | grep "$HOME/.local/bin"
 ```
 
-If the directory is missing, append the following line to your shell configuration.
+If the directory is missing, append the following line to your shell configuration:
 
 ```
 [ -d $HOME/.local/bin ] && export PATH="$HOME/.local/bin:$PATH"
 ```
 
-Bash: `~/.profile`
+- Bash: `~/.profile`
+- Zsh: `~/.zprofile`
 
-Zsh: `~/.zprofile`
+After editing the file(s), log out and back in.
 
-After editing the file(s) log out and back in.
+</details>
 
----
-
-## Proton is not being detected
+<details>
+<summary>Proton is not being detected</summary>
 
 The script searches for the Proton version specified by `PROTON_VER`.
 
@@ -226,35 +222,34 @@ To install Proton:
 3. Search for the Proton version (for example, `Proton Experimental`).
 4. Install it.
 
-For GE-Proton(recommended), install it using your preferred Proton-GE installation method (ProtonPlus, ProtonUp-Qt or manual installation).
+For GE-Proton (recommended), install it using your preferred Proton-GE installation method (ProtonPlus, ProtonUp-Qt, or manual installation).
 
----
+</details>
 
-## Steam Runtime is not being detected
+<details>
+<summary>Steam Runtime is not being detected</summary>
 
-The script expects Steam Linux Runtime Sniper to exist.
-
-Usually it is downloaded automatically after launching any Windows game.
+The script expects Steam Linux Runtime Sniper to exist. It is usually downloaded automatically after launching any Windows game.
 
 If it is missing:
 
-- Launch any Proton game from Steam.
-- Steam should automatically download **Steam Linux Runtime - Sniper**.
+- Launch any Proton game from Steam. Steam should automatically download **Steam Linux Runtime - Sniper**.
 
 Or install it manually:
 
 1. Open Steam.
 2. Enable **Tools** in your library filter.
-3. Search for `Steam Linux Runtime 3.0 (sniper)`
+3. Search for `Steam Linux Runtime 3.0 (sniper)`.
 4. Install it manually.
 
----
+</details>
 
-## Installing MangoHud
+<details>
+<summary>Installing MangoHud</summary>
 
 <details>
 <summary>Ubuntu / Debian</summary>
-  
+
 ```
 sudo apt install mangohud
 ```
@@ -290,19 +285,16 @@ sudo zypper install mangohud
 
 If your distribution does not package MangoHud, install it from [the official GitHub releases](https://github.com/flightlessmango/MangoHud).
 
----
+</details>
 
-## Other common problems
+<details>
+<summary>Other common problems</summary>
 
-### Steam installed through Flatpak
+**Steam installed through Flatpak**
 
-The script expects a standard Steam installation.
+The script expects a standard Steam installation. If using the Flatpak version, `STEAM_ROOT` will likely need to be changed.
 
-If using the Flatpak version, `STEAM_ROOT` will likely need to be changed.
-
----
-
-### Executable does not start
+**Executable does not start**
 
 Check:
 
@@ -310,10 +302,8 @@ Check:
 - The required Visual C++ runtimes are installed.
 - The application is compatible with your Proton version.
 
----
+**Prefix issues**
 
-### Prefix issues
+Delete the application's Proton prefix and let it be recreated. By default, prefixes are stored in `~/.proton/`.
 
-Delete the application's Proton prefix and let it be recreated.
-
-By default they are stored in `~/.proton/`.
+</details>
