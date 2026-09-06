@@ -30,7 +30,7 @@ Features:
 - Steam
 - A Proton version (GE-Proton(recommended) or official Proton)
 - Steam Linux Runtime (Sniper)
-- Mangohud (optional)
+- MangoHud (optional)
 
 ---
 
