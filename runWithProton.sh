@@ -34,7 +34,7 @@ if [[ ! "$USE_UNIFIED_PREFIX" =~ ^[01]$ ]] || [[ ! "$MANGOHUD" =~ ^[01]$ ]]; the
 fi
 
 # Define script version
-VER="1.1.2"
+VER="1.1.3"
 
 # Parse arguments
 POSITIONAL_ARGS=()
@@ -125,172 +125,161 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         --man)
-            if [[ $USE_UNIFIED_PREFIX -eq 0 ]]; then
-                DISPLAY_PREFIX_PATH="$PROTON_ROOT/<exe-name>"
-                UP_ENABLED=""
-                UP_DISABLED=" (default)"
-            else
-                DISPLAY_PREFIX_PATH="$PROTON_ROOT/protonprefix"
-                UP_DISABLED=""
-                UP_ENABLED=" (default)"
-            fi
-
-            if [[ $MANGOHUD -eq 0 ]]; then
-                MH_ENABLED=""
-                MH_DISABLED="(default)"
-            else
-                MH_ENABLED="(default)"
-                MH_DISABLED=""
-            fi
-
-            eval "${PAGER:-less}" <<EOF
-Portable Proton App Runner
-Version: $VER
-
-Run Windows executables using a locally installed Steam Proton version
+            man -l - << EOF
+.TH PROTON-RUNNER 1 "$(date +'%B %Y')" "Portable Proton App Runner $VER" "User Commands"
+.SH NAME
+proton-runner \- Portable Proton App Runner
+.SH SYNOPSIS
+.B proton-runner
+[\fIOPTIONS\fR] <\fIexecutable\fR> [\fIarguments...\fR]
+.SH DESCRIPTION
+.B proton-runner
+runs Windows executables using a locally installed Steam Proton version
 without requiring the game to be installed through Steam.
-
-Usage:
-  proton-runner [OPTIONS] <executable> [arguments...]
-
-Required arguments:
-
-  <executable>
-      Path to the Windows executable (.exe) to run.
-
-  [arguments...]
-      Additional arguments passed directly to the executable.
-
-Options:
-
-  --prefix=PATH
-      Use PATH as the Proton/Wine prefix instead of the default prefix.
-
-      Default:
-        $DISPLAY_PREFIX_PATH
-
-      The prefix contains the Wine environment, including the
-      virtual C: drive and Proton configuration.
-
-  --proton=VERSION
-      Select the Proton version used to run the executable.
-
-      Default:
-        $PROTON_VER
-
-      The specified version must be installed in one of the
-      configured Steam Proton directories.
-
-  --steamappid=ID
-      Set the Steam AppID used by Proton.
-      Useful for taking advantage of Steam's per-game protonfixes.
-
-      If omitted, AppID 0 is used.
-
-  --mangohud
-      Enable the MangoHud performance overlay. $MH_ENABLED
-
-  --nomangohud
-      Disable the MangoHud performance overlay. $MH_DISABLED
-
-  --help, -h
-      Display this help message and exit.
-
-  --version, -v
-      Display the script version and exit.
-
-Configuration:
-
-  User configuration:
-    $CFG_DIR
-
-  Default Proton root:
-    $PROTON_ROOT
-
-  Steam installation:
-    $STEAM_ROOT
-
-Prefix modes:
-
-  Separate prefix$UP_DISABLED:
-      A separate prefix is created for each executable.
-
-  Unified prefix$UP_ENABLED:
-      All executables share:
-        $PROTON_ROOT/protonprefix
-
-Examples:
-
-  Run an executable:
-    proton-runner ~/games/MyGame/mygame.exe
-
-  Pass arguments to the executable:
-    proton-runner ~/games/MyGame/mygame.exe --windowed --nosound
-
-  Use a custom prefix:
-    proton-runner --prefix=~/.proton/mygame ~/games/MyGame/mygame.exe
-
-  Use a specific Proton version:
-    proton-runner --proton=GE-Proton9-27 ~/games/MyGame/mygame.exe
-
-  Enable MangoHud:
-    proton-runner --mangohud ~/games/MyGame/mygame.exe
-
-  Set a Steam AppID:
-    proton-runner --steamappid=400 ~/games/MyGame/mygame.exe
-
-  Combine options:
-    proton-runner --proton=GE-Proton9-27 --mangohud --prefix=~/.proton/mygame ~/games/MyGame/mygame.exe
-
-Environment variables:
-
-  Portable Proton App Runner also supports configuration via the
-  following environment variables.
-
-  They can be set before launching the runner or defined in:
-    $CFG_DIR
-
-  PROTON_ROOT
-      Directory where Proton prefixes will be created.
-
-  PROTON_VER
-      Proton version to use.
-
-  ADDITIONAL_PROTON_DIRS
-      List of additional directories searched for installed Proton versions.
-
-  STEAM_RUNTIME
-      Path to the Steam Linux Runtime used to launch Proton.
-
-  USE_UNIFIED_PREFIX
-      Controls whether all executables share a single Proton prefix.
-
-      0 = separate prefix per executable
-      1 = use \$PROTON_ROOT/protonprefix
-
-  MANGOHUD
-      Controls whether MangoHud is enabled.
-
-      0 = disabled
-      1 = enabled
-
-  APPID
-      Steam AppID passed to Proton.
-      0 if unset.
-
-  CUSTOM_PREFIX
-      Proton prefix directory.
-
-Exit codes:
-
-  1   Invalid configuration
-  2   Missing executable
-  3   Invalid option
-  4   Proton version not found
-  5   Steam Runtime not found
-  6   Invalid Steam AppID
-  7   Unable to access executable directory
-  8   MangoHud is enabled but was not found
+.SH ARGUMENTS
+.TP
+.I <executable>
+Path to the Windows executable (.exe) to run.
+.TP
+.I [arguments...]
+Additional arguments passed directly to the executable.
+.SH OPTIONS
+.TP
+.BI \-\-prefix= PATH
+Use \fIPATH\fR as the Proton/Wine prefix instead of the default prefix.
+.IP
+Default: ~/.proton/<exe-name>
+.IP
+The prefix contains the Wine environment, including the virtual C: drive and Proton configuration.
+.TP
+.BI \-\-proton= VERSION
+Select the Proton version used to run the executable.
+.IP
+Default: Proton - Experimental
+.IP
+The specified version must be installed in one of the configured Steam Proton directories.
+.TP
+.BI \-\-steamappid= ID
+Set the Steam AppID used by Proton. Useful for taking advantage of Steam's per-game protonfixes.
+.IP
+If omitted, AppID 0 is used.
+.TP
+.B \-\-mangohud
+Enable the MangoHud performance overlay.
+.TP
+.B \-\-nomangohud
+Disable the MangoHud performance overlay. (Default)
+.TP
+.B \-h, \-\-help
+Display help message and exit.
+.TP
+.B \-h, \-\-man
+Display this manual page.
+.TP
+.B \-v, \-\-version
+Display the script version and exit.
+.SH DEFAULT CONFIGURATION
+.TP
+.B User configuration:
+~/.config/proton-runner/config.sh
+.TP
+.B Proton root:
+~/.proton
+.TP
+.B Steam installation:
+~/.steam/root (Automatically resolving symlinks)
+.SH PREFIX MODES
+.TP
+.B Separate prefix (Default)
+A separate prefix is created for each executable.
+.TP
+.B Unified prefix
+All executables share: ~/.proton/protonprefix
+.SH ENVIRONMENT
+Portable Proton App Runner supports configuration via the following environment variables. They can be set before launching the runner or defined in \fI~/.config/proton-runner/config.sh\fR.
+.TP
+.B PROTON_ROOT
+Directory where Proton prefixes will be created.
+.TP
+.B PROTON_VER
+Proton version to use.
+.TP
+.B ADDITIONAL_PROTON_DIRS
+List of additional directories searched for installed Proton versions.
+.TP
+.B STEAM_RUNTIME
+Path to the Steam Linux Runtime used to launch Proton.
+.TP
+.B USE_UNIFIED_PREFIX
+Controls whether all executables share a single Proton prefix.
+.RS
+.IP "0" 4
+Separate prefix per executable.
+.IP "1" 4
+Use \fI~/.proton/protonprefix\fR.
+.RE
+.TP
+.B MANGOHUD
+Controls whether MangoHud is enabled.
+.RS
+.IP "0" 4
+Disabled.
+.IP "1" 4
+Enabled.
+.RE
+.TP
+.B APPID
+Steam AppID passed to Proton. 0 if unset.
+.TP
+.B CUSTOM_PREFIX
+Proton prefix directory.
+.SH EXAMPLES
+.TP
+Run an executable:
+.B proton\-runner ~/games/MyGame/mygame.exe
+.TP
+Pass arguments to the executable:
+.B proton\-runner ~/games/MyGame/mygame.exe \-\-windowed \-\-nosound
+.TP
+Use a custom prefix:
+.B proton\-runner \-\-prefix=~/.proton/mygame ~/games/MyGame/mygame.exe
+.TP
+Use a specific Proton version:
+.B proton\-runner \-\-proton=GE\-Proton9\-27 ~/games/MyGame/mygame.exe
+.TP
+Enable MangoHud:
+.B proton\-runner \-\-mangohud ~/games/MyGame/mygame.exe
+.TP
+Set a Steam AppID:
+.B proton\-runner \-\-steamappid=400 ~/games/MyGame/mygame.exe
+.TP
+Combine options:
+.B proton\-runner \-\-proton=GE\-Proton9\-27 \-\-mangohud \-\-prefix=~/.proton/mygame ~/games/MyGame/mygame.exe
+.SH EXIT STATUS
+.TP
+.B 1
+Invalid configuration
+.TP
+.B 2
+Missing executable
+.TP
+.B 3
+Invalid option
+.TP
+.B 4
+Proton version not found
+.TP
+.B 5
+Steam Runtime not found
+.TP
+.B 6
+Invalid Steam AppID
+.TP
+.B 7
+Unable to access executable directory
+.TP
+.B 8
+MangoHud is enabled but was not found
 EOF
             exit 0
             ;;
