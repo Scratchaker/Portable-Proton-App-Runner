@@ -14,7 +14,7 @@ Features:
 ### Installation:
 
 ```
-curl -fsSL https://raw.githubusercontent.com/Scratchaker/Portable-Proton-App-Runner/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Scratchaker/Portable-Proton-App-Runner/main/scripts/install.sh | bash
 ```
 
 ---
@@ -44,11 +44,11 @@ Use the One-liner setup scripts:
 Installation:
 
 ```
-curl -fsSL https://raw.githubusercontent.com/Scratchaker/Portable-Proton-App-Runner/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Scratchaker/Portable-Proton-App-Runner/main/scripts/install.sh | bash
 ```
 
 Uninstallation:
 
 ```
-curl -fsSL https://raw.githubusercontent.com/Scratchaker/Portable-Proton-App-Runner/main/uninstall.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Scratchaker/Portable-Proton-App-Runner/main/scripts/uninstall.sh | bash
 ```

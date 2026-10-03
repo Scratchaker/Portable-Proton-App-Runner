@@ -26,7 +26,7 @@ cd "$installerDir"
 
 # Download the repository
 git clone https://github.com/Scratchaker/Portable-Proton-App-Runner.git
-cd Portable-Proton-App-Runner
+cd Portable-Proton-App-Runner/src
 
 # Copy files to their installation locations
 echo -e "\e[34mCopying files...\e[0m"
