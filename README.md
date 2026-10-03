@@ -2,27 +2,30 @@
 
 Run Windows applications and games directly from your Linux file manager using **Steam's Proton** and **Steam Runtime**, without adding them to your Steam library.
 
+<p align="center"><img src="assets/proton-runner-demo.gif" width="40%" alt="Project Demo"></p>
+
 Features:
 
-- Automatic per-application Proton prefixes
-- Optional custom prefixes
-- Optional shared prefix
-- Optional MangoHud support
-- Desktop integration through a `.desktop` file
-- Passes all additional arguments directly to the executable
+- Automatic per-application Proton prefixes.
+- Optional custom prefixes.
+- MangoHud support.
+- Desktop integration through a `.desktop` file.
+
+### Installation:
+
+```
+curl -fsSL https://raw.githubusercontent.com/Scratchaker/Portable-Proton-App-Runner/main/install.sh | bash
+```
 
 ---
 
 # Table of Contents
 
 - [Dependencies](#dependencies)
-- [Installation](#installation)
-- [Uninstallation](#uninstallation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Flags and env vars](#flags-and-env-vars)
-- [How it works](#how-it-works)
-- [Troubleshooting](#troubleshooting)
+- [Installation and Uninstallation](#installation-and-uninstallation)
+- [Usage](docs/usage-configuration.md#usage)
+- [Configuration](docs/usage-configuration.md/#configuration)
+- [Troubleshooting](docs/troubleshooting.md)
 
 ---
 
@@ -34,259 +37,18 @@ Features:
 
 ---
 
-# Installation
+# Installation and Uninstallation
 
-Use the One-liner install script:
+Use the One-liner setup scripts:
+
+Installation:
 
 ```
 curl -fsSL https://raw.githubusercontent.com/Scratchaker/Portable-Proton-App-Runner/main/install.sh | bash
 ```
 
-Once installed, most desktop environments will allow opening `.exe` files using **Proton Runner**.
-
----
-
-# Uninstallation
-
-Use the One-liner uninstall script:
+Uninstallation:
 
 ```
 curl -fsSL https://raw.githubusercontent.com/Scratchaker/Portable-Proton-App-Runner/main/uninstall.sh | bash
 ```
-
----
-
-# Configuration
-
-Use the config file located in `~/.config/proton-runner/config.sh`.
-
-```
-PROTON_ROOT="$HOME/.proton"
-STEAM_ROOT="$(realpath "$HOME/.steam/root")"
-PROTON_VER="Proton - Experimental"
-ADDITIONAL_PROTON_DIRS=("/usr/share/steam")
-STEAM_RUNTIME="$STEAM_ROOT/steamapps/common/SteamLinuxRuntime_sniper/run"
-USE_UNIFIED_PREFIX=0
-MANGOHUD=0
-```
-
-| Config | Description | Default |
-|---|---|---|
-| `PROTON_ROOT` | Location where Proton prefixes are stored. | `"$HOME/.proton"` |
-| `STEAM_ROOT` | Steam installation directory. | `"$HOME/.steam/root"` Usually a symlink(resolved with `realpath`) |
-| `PROTON_VER` | Proton version to use, must be in `STEAM_ROOT` or `ADDITIONAL_PROTON_DIRS`. | `"Proton - Experimental"` |
-| `ADDITIONAL_PROTON_DIRS` | Alternative directories where proton may be installed, use bash list syntax (`("/usr/share/steam" "/example/dir")`). | `("/usr/share/steam")` |
-| `USE_UNIFIED_PREFIX` | Use a single prefix for all games. (`0` or `1`) | `0` |
-| `MANGOHUD` | Use the MangoHud performance overlay. (`0` or `1`) | `0` |
-
-**Most configurations can be overridden with cli flags and env vars*
-
----
-
-# Usage
-
-**Basic usage:**
-```
-proton-runner game.exe
-```
-
-**Custom prefix:**
-```
-proton-runner --prefix="~/.proton/mygame" game.exe
-```
-```
-CUSTOM_PREFIX="~/.proton/mygame" proton-runner game.exe
-```
-**Custom proton version:**
-```
-proton-runner --proton="GE-Proton10-34" game.exe
-```
-```
-PROTON_VER="GE-Proton10-34" proton-runner game.exe
-```
-**Force a custom Steam AppID (To take advantage of per-game protonfixes):**
-```
-proton-runner --steamappid=477160 game.exe
-```
-```
-APPID=477160 proton-runner game.exe
-```
-**Enable MangoHud:**
-```
-proton-runner --mangohud game.exe
-```
-```
-MANGOHUD=1 proton-runner game.exe
-```
-**Disable MangoHud:**
-```
-proton-runner --nomangohud game.exe
-```
-```
-MANGOHUD=0 proton-runner game.exe
-```
-**Pass extra arguments to the game:**
-```
-proton-runner game.exe --windowed --nosound
-```
-*Passed arguments must be supported by the game*
-
----
-# Flags and env vars
-
-| Flag                          | ENV var                            | Description                                    |
-|-------------------------------|------------------------------------|------------------------------------------------|
-| `--prefix="~/path/to/prefix"` | `CUSTOM_PREFIX="~/path/to/prefix"` | Set custom prefix                              |
-| `--proton="Proton version"`   | `PROTON_VER="Proton version"`      | Use custom proton version                      |
-| `--steamappid=appid`          | `APPID=appid`                      | Select a per-game Protonfix                    |
-| `--mangohud`                  | `MANGOHUD=1`                       | Enable MangoHud                                |
-| `--nomangohud`                | `MANGOHUD=0`                       | Disable MangoHud                               |
-| `--help` `-h`                 | -                                  | Print help message                             |
-| `--man`                       | -                                  | Show manual page                               |
-| `--version` `-v`              | -                                  | Show script version                            |
-
----
-
-# How it works
-
-When an executable is launched:
-
-1. The script determines which Proton version should be used.
-2. A Proton prefix is created (or reused).
-3. Steam Runtime is initialized.
-4. Required Proton environment variables are exported.
-5. Proton launches the executable passing extra arguments to the game.
-
----
-
-# Troubleshooting
-
-<details>
-<summary><code>~/.local/bin</code> is not in PATH</summary>
-
-Some distributions do not automatically include `~/.local/bin` in your `$PATH`.
-
-**Some distributions only include it if the directory exists at login. In these cases, a reboot or logout+login should fix it.*
-
-Check with:
-
-```
-echo $PATH | grep "$HOME/.local/bin"
-```
-
-If the directory is missing, append the following line to your shell configuration:
-
-```
-[ -d $HOME/.local/bin ] && export PATH="$HOME/.local/bin:$PATH"
-```
-
-- Bash: `~/.profile`
-- Zsh: `~/.zprofile`
-
-After editing the file(s), log out and back in.
-
-</details>
-
-<details>
-<summary>Proton is not being detected</summary>
-
-The script searches for the Proton version specified by `PROTON_VER`.
-
-If it cannot be found:
-
-- Verify that the version is installed.
-- Change `PROTON_VER` to match an installed version.
-- Install the desired Proton version from Steam.
-
-To install Proton:
-
-1. Open Steam.
-2. Enable **Tools** in your library filter.
-3. Search for the Proton version (for example, `Proton Experimental`).
-4. Install it.
-
-For GE-Proton (recommended), install it using your preferred Proton-GE installation method (ProtonPlus, ProtonUp-Qt, or manual installation).
-
-</details>
-
-<details>
-<summary>Steam Runtime is not being detected</summary>
-
-The script expects Steam Linux Runtime Sniper to exist. It is usually downloaded automatically after launching any Windows game.
-
-If it is missing:
-
-- Launch any Proton game from Steam. Steam should automatically download **Steam Linux Runtime - Sniper**.
-
-Or install it manually:
-
-1. Open Steam.
-2. Enable **Tools** in your library filter.
-3. Search for `Steam Linux Runtime 3.0 (sniper)`.
-4. Install it manually.
-
-</details>
-
-<details>
-<summary>Installing MangoHud</summary>
-
-<details>
-<summary>Ubuntu / Debian</summary>
-
-```
-sudo apt install mangohud
-```
-
-</details>
-
-<details>
-<summary>Fedora</summary>
-
-```
-sudo dnf install mangohud
-```
-
-</details>
-
-<details>
-<summary>Arch Linux</summary>
-
-```
-sudo pacman -S mangohud
-```
-
-</details>
-
-<details>
-<summary>openSUSE</summary>
-
-```
-sudo zypper install mangohud
-```
-
-</details>
-
-If your distribution does not package MangoHud, install it from [the official GitHub releases](https://github.com/flightlessmango/MangoHud).
-
-</details>
-
-<details>
-<summary>Other common problems</summary>
-
-**Steam installed through Flatpak**
-
-The script expects a standard Steam installation. If using the Flatpak version, `STEAM_ROOT` will likely need to be changed.
-
-**Executable does not start**
-
-Check:
-
-- The executable is not corrupted.
-- The required Visual C++ runtimes are installed.
-- The application is compatible with your Proton version.
-
-**Prefix issues**
-
-Delete the application's Proton prefix and let it be recreated. By default, prefixes are stored in `~/.proton/`.
-
-</details>
