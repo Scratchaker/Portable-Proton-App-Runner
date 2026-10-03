@@ -1,8 +1,8 @@
 [Desktop Entry]
-Comment=
+Comment=Portable Proton App Runner
 Exec=proton-runner %f
 Icon=applications-games
 MimeType=application/x-ms-dos-executable;
 Name=Proton Runner
 NoDisplay=true
-
+Type=Application
